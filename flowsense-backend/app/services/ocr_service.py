@@ -18,7 +18,29 @@ try:
     tesseract_cmd = shutil.which('tesseract')
     if not tesseract_cmd:
         # Try common locations
-        for path in ['/usr/bin/tesseract', '/usr/local/bin/tesseract', '/bin/tesseract']:
+        common_paths = [
+            '/usr/bin/tesseract',
+            '/usr/local/bin/tesseract',
+            '/bin/tesseract',
+            '/usr/share/tesseract-ocr/bin/tesseract',
+        ]
+        # Also try to find via dpkg if available
+        try:
+            import subprocess
+            result = subprocess.run(
+                ['dpkg', '-L', 'tesseract-ocr'],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if result.returncode == 0:
+                for line in result.stdout.split('\n'):
+                    if '/bin/tesseract' in line and os.path.exists(line.strip()):
+                        common_paths.insert(0, line.strip())
+        except:
+            pass
+        
+        for path in common_paths:
             if os.path.exists(path):
                 tesseract_cmd = path
                 break
