@@ -12,10 +12,30 @@ logger = logging.getLogger(__name__)
 try:
     from PIL import Image
     import pytesseract
-    TESSERACT_AVAILABLE = True
+    import shutil
+    
+    # Find tesseract binary
+    tesseract_cmd = shutil.which('tesseract')
+    if not tesseract_cmd:
+        # Try common locations
+        for path in ['/usr/bin/tesseract', '/usr/local/bin/tesseract', '/bin/tesseract']:
+            if os.path.exists(path):
+                tesseract_cmd = path
+                break
+    
+    if tesseract_cmd:
+        pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
+        TESSERACT_AVAILABLE = True
+        logger.info(f"Tesseract found at: {tesseract_cmd}")
+    else:
+        TESSERACT_AVAILABLE = False
+        logger.warning("Tesseract binary not found. Install tesseract-ocr.")
 except ImportError:
     TESSERACT_AVAILABLE = False
     logger.warning("Tesseract not available. Install pytesseract and tesseract-ocr.")
+except Exception as e:
+    TESSERACT_AVAILABLE = False
+    logger.warning(f"Tesseract setup failed: {e}")
 
 try:
     from openai import OpenAI
