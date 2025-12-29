@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && \
-    pip list | grep -E "pytesseract|openai" && \
-    python -c "import pytesseract; from openai import OpenAI; print('AI packages OK')"
+    pip install --no-cache-dir pytesseract==0.3.10 openai==1.12.0 && \
+    python -c "import pytesseract; from openai import OpenAI; print('AI packages installed successfully')" && \
+    tesseract --version
 
 # Copy application code
 COPY . .
