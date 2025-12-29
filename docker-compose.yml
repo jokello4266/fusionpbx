@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
     container_name: flowsense-postgres
     environment:
       POSTGRES_USER: flowsense
-      POSTGRES_PASSWORD: flowsense
+      POSTGRES_PASSWORD: FlowSense2024Secure!
       POSTGRES_DB: flowsense
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -24,7 +22,8 @@ services:
       dockerfile: Dockerfile
     container_name: flowsense-backend
     environment:
-      DATABASE_URL: postgresql://flowsense:flowsense@postgres:5432/flowsense
+      DATABASE_URL: postgresql://flowsense:FlowSense2024Secure!@postgres:5432/flowsense
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     volumes:
       - ./flowsense-backend:/app
       - photos_data:/app/photos
