@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
     libtesseract-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && which tesseract || (echo "Tesseract installed but not in PATH" && find /usr -name tesseract 2>/dev/null | head -1)
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
